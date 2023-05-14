@@ -2,7 +2,6 @@ import {
   createAsyncThunk,
   createSlice,
   createSelector,
-  nanoid,
   createEntityAdapter,
 } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
@@ -17,7 +16,7 @@ const initialState = postsAdapter.getInitialState({
 })
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-  const response = await client.get('fakeApi/posts')
+  const response = await client.get('/fakeApi/posts')
   return response.data
 })
 
@@ -33,23 +32,6 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    postAdded: {
-      reducer(state, action) {
-        state.posts.push(action.payload)
-      },
-      prepare(title, content, userId) {
-        return {
-          payload: {
-            id: nanoid(),
-            date: new Date().toISOString(),
-            title,
-            content,
-            user: userId,
-            reactions: { thumbsUp: 0, hooray: 0, heart: 0, rocket: 0, eyes: 0 },
-          },
-        }
-      },
-    },
     reactionAdded(state, action) {
       const { postId, reaction } = action.payload
       const existingPost = state.entities[postId]
@@ -66,6 +48,7 @@ const postsSlice = createSlice({
       }
     },
   },
+
   extraReducers(builder) {
     builder
       .addCase(fetchPosts.pending, (state, action) => {

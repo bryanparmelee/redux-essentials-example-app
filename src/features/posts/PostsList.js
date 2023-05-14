@@ -14,11 +14,11 @@ import {
   selectPostById,
 } from './postsSlice'
 
-const PostExcerpt = ({ postId }) => {
+let PostExcerpt = ({ postId }) => {
   const post = useSelector((state) => selectPostById(state, postId))
 
   return (
-    <article className="post-excerpt">
+    <article className="post-excerpt" key={post.id}>
       <h3>{post.title}</h3>
       <div>
         <PostAuthor userId={post.user} />
@@ -38,7 +38,6 @@ export const PostsList = () => {
   const dispatch = useDispatch()
   const orderedPostIds = useSelector(selectPostIds)
 
-  const posts = useSelector(selectAllPosts)
   const postStatus = useSelector((state) => state.posts.status)
   const error = useSelector((state) => state.posts.error)
 
@@ -56,7 +55,7 @@ export const PostsList = () => {
     content = orderedPostIds.map((postId) => (
       <PostExcerpt key={postId} postId={postId} />
     ))
-  } else if (postStatus === 'error') {
+  } else if (postStatus === 'failed') {
     content = <div>{error}</div>
   }
 
